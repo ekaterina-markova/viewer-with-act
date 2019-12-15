@@ -42,8 +42,7 @@
     "react-dom": "^16.8.6",
     "react-redux": "^6.0.0",
     "react-resize-detector": "^3.4.0",
-    "redux": "^4.0.1",
-    "ohif-contour-tool": "https://github.com/PencilML/ohif-contour-tool.git"
+    "redux": "^4.0.1"
   },
   "dependencies": {
     "@babel/runtime": "^7.5.5",
@@ -51,6 +50,7 @@
     "lodash.merge": "^4.6.2",
     "lodash.throttle": "^4.1.1",
     "query-string": "^6.8.3",
-    "react-cornerstone-viewport": "2.x.x"
+    "react-cornerstone-viewport": "2.x.x",
+    "ohif-contour-tool": "https://github.com/PencilML/ohif-contour-tool.git"
   }
 }
