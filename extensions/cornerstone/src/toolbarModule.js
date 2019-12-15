@@ -243,6 +243,15 @@ const definitions = [
     icon: 'ellipse-circle',
     buttons: [
       {
+        id: 'SimpleBrush',
+        label: 'SimpleBrush',
+        icon: 'circle',
+        //
+        type: TOOLBAR_BUTTON_TYPES.SET_TOOL_ACTIVE,
+        commandName: 'setToolActive',
+        commandOptions: { toolName: 'Brush' },
+      },
+      {
         id: 'ContourBrush',
         label: 'ContourBrush',
         icon: 'circle',
