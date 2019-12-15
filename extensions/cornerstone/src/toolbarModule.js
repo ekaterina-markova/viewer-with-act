@@ -237,6 +237,40 @@ const definitions = [
       },
     ],
   },
+  {
+    id: 'SegmentationTools',
+    label: 'SegmentationTools',
+    icon: 'ellipse-circle',
+    buttons: [
+      {
+        id: 'ContourBrush',
+        label: 'ContourBrush',
+        icon: 'circle',
+        //
+        type: TOOLBAR_BUTTON_TYPES.SET_TOOL_ACTIVE,
+        commandName: 'setToolActive',
+        commandOptions: { toolName: 'ContourBrush' },
+      },
+      {
+        id: 'PencilML',
+        label: 'PencilML',
+        icon: 'circle',
+        //
+        type: TOOLBAR_BUTTON_TYPES.SET_TOOL_ACTIVE,
+        commandName: 'setToolActive',
+        commandOptions: { toolName: 'PencilML' },
+      },
+      {
+        id: 'ContourFill',
+        label: 'ContourFill',
+        icon: 'circle',
+        //
+        type: TOOLBAR_BUTTON_TYPES.SET_TOOL_ACTIVE,
+        commandName: 'setToolActive',
+        commandOptions: { toolName: 'ContourFill' },
+      },
+    ],
+  },
 ];
 
 export default {

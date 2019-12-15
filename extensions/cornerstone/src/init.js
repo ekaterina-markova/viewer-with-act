@@ -5,6 +5,7 @@ import initCornerstoneTools from './initCornerstoneTools.js';
 import queryString from 'query-string';
 import { SimpleDialog } from '@ohif/ui';
 import merge from 'lodash.merge';
+import { ContourBrushTool, PencilMLTool, ContourFillTool } from 'ohif-contour-tool';
 
 function fallbackMetaDataProvider(type, imageId) {
   if (!imageId.includes('wado?requestType=WADO')) {
@@ -132,11 +133,17 @@ export default function init({ servicesManager, configuration }) {
       csTools.setToolPassive(toolName); // there may be a better place to determine name; may not be on uninstantiated class
     }
   });
-  
+
   csTools.setToolActive('Pan', { mouseButtonMask: 4 });
   csTools.setToolActive('Zoom', { mouseButtonMask: 2 });
   csTools.setToolActive('Wwwc', { mouseButtonMask: 1 });
   csTools.setToolActive('StackScrollMouseWheel', {}); // TODO: Empty options should not be required
   csTools.setToolActive('PanMultiTouch', { pointers: 2 }); // TODO: Better error if no options
   csTools.setToolActive('ZoomTouchPinch', {});
+
+  csTools.addTool(ContourBrushTool);
+  csTools.addTool(PencilMLTool, {
+    configuration: { backendHost: '' },
+  });
+  csTools.addTool(ContourFillTool);
 }
