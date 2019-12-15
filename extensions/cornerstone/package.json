@@ -43,7 +43,7 @@
     "react-redux": "^6.0.0",
     "react-resize-detector": "^3.4.0",
     "redux": "^4.0.1",
-    "ohif-contour-tool": "git://github.com/PencilML/ohif-contour-tool.git"
+    "ohif-contour-tool": "https://github.com/PencilML/ohif-contour-tool.git"
   },
   "dependencies": {
     "@babel/runtime": "^7.5.5",
