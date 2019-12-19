@@ -278,6 +278,15 @@ const definitions = [
         commandName: 'setToolActive',
         commandOptions: { toolName: 'ContourFill' },
       },
+      {
+        id: 'ActiveContour',
+        label: 'ActiveContour',
+        icon: 'edit',
+        //
+        type: TOOLBAR_BUTTON_TYPES.SET_TOOL_ACTIVE,
+        commandName: 'setToolActive',
+        commandOptions: { toolName: 'ActiveContour' },
+      },
     ],
   },
 ];
