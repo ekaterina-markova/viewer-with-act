@@ -242,6 +242,23 @@ const commandsModule = ({ servicesManager }) => {
       cornerstoneTools.removeToolState(element, toolType, tool);
       cornerstone.updateImage(element);
     },
+    exitFromTools: ({ viewports, evt }) => {
+      const enabledElement = getEnabledElement(viewports.activeViewportIndex);
+      const defaultToolType = 'Pan';
+
+      if (enabledElement) {
+        cornerstone.reset(enabledElement);
+        cornerstoneTools.setToolActive(defaultToolType, { mouseButtonMask: 1 });
+        const tools = new Map();
+        document.querySelectorAll('.toolbar-button').forEach(toolElement => {
+          const toolType = toolElement.querySelector('.toolbar-button-label')
+            .innerText;
+          tools.set(toolType, toolElement);
+        });
+        const defaultTool = tools.get(defaultToolType);
+        defaultTool.click();
+      }
+    },
   };
 
   const definitions = {
@@ -346,6 +363,11 @@ const commandsModule = ({ servicesManager }) => {
     setToolActive: {
       commandFn: actions.setToolActive,
       storeContexts: [],
+      options: {},
+    },
+    exitFromTools: {
+      commandFn: actions.exitFromTools,
+      storeContexts: ['viewports'],
       options: {},
     },
   };
