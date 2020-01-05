@@ -143,7 +143,7 @@ export default function init({ servicesManager, configuration }) {
 
   csTools.addTool(ContourBrushTool);
   csTools.addTool(PencilMLTool, {
-    // configuration: { backendHost: 'http://localhost:8080' },
+    configuration: { backendHost: process.env.PENCIL_ML_BACKEND_HOST || '' },
   });
   csTools.addTool(ContourFillTool);
 }
