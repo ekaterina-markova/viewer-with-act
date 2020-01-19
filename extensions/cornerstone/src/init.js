@@ -5,7 +5,7 @@ import initCornerstoneTools from './initCornerstoneTools.js';
 import queryString from 'query-string';
 import { SimpleDialog } from '@ohif/ui';
 import merge from 'lodash.merge';
-import { ContourBrushTool, PencilMLTool, ContourFillTool } from 'ohif-contour-tool';
+import { ContourBrushTool, PencilMLTool, ContourFillTool, ActiveContourTool } from 'ohif-contour-tool';
 
 function fallbackMetaDataProvider(type, imageId) {
   if (!imageId.includes('wado?requestType=WADO')) {
@@ -146,4 +146,5 @@ export default function init({ servicesManager, configuration }) {
     configuration: { backendHost: process.env.PENCIL_ML_BACKEND_HOST },
   });
   csTools.addTool(ContourFillTool);
+  csTools.addTool(ActiveContourTool);
 }
