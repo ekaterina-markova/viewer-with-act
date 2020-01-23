@@ -14171,7 +14171,7 @@ octokit-pagination-methods@^1.1.0:
 
 "ohif-contour-tool@https://github.com/PencilML/ohif-contour-tool.git":
   version "1.0.0"
-  resolved "https://github.com/PencilML/ohif-contour-tool.git#c0d6ba34d35e385d7070322b3693233b2140a24f"
+  resolved "https://github.com/PencilML/ohif-contour-tool.git#2446ac88ed141c6407ea110b2770184c6fe1512a"
   dependencies:
     d3 "^5.14.2"
     n-dimensional-flood-fill "^1.0.0"
