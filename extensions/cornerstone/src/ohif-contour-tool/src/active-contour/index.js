@@ -38,7 +38,7 @@ export default class ActiveContourTool extends BaseBrushTool {
     this._init = this._init.bind(this);
     this._animate = this._animate.bind(this);
 
-    this.updateOnMouseMove = false;
+    this.lock = false;
   }
 
   _init(evt) {
@@ -116,6 +116,9 @@ export default class ActiveContourTool extends BaseBrushTool {
   }
 
   _drawingMouseUpCallback(evt) {
+    if(this.lock) {
+      return;
+    }
     const eventData = evt.detail;
     const { element, currentPoints } = eventData;
     this.finishCoords = currentPoints.image;
@@ -156,14 +159,16 @@ export default class ActiveContourTool extends BaseBrushTool {
     const canvas = document.getElementsByClassName('canvas-animate')[0];
     const ctx = canvas.getContext('2d');
     ctx.strokeStyle = 'rgb(0,255,0)';
-
+    scope.lock = true;
     let timerId = setInterval(function() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.beginPath();
       ctx.moveTo(scope.result[it][0][0], scope.result[it][0][1]);
 
       for (let i = 1; i < scope.result[it].length; i++) {
-        ctx.lineTo(scope.result[it][i][0], scope.result[it][i][1]);
+        const x = scope.result[it][i][0];
+        const y = scope.result[it][i][1];
+        ctx.lineTo(x, y);
       }
 
       ctx.closePath();
@@ -173,6 +178,7 @@ export default class ActiveContourTool extends BaseBrushTool {
         clearInterval(timerId);
         canvas.remove();
         scope._paint(evt);
+        scope.lock = false;
       }
       it++;
     }, 700);

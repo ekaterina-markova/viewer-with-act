@@ -49,21 +49,21 @@ export const ACM = (function() {
     this.onComplete = _onComplete;
     //   console.log(this.params.dots)
     /*
-        if (this.w / this.h  > this.displayedArea.x / this.displayedArea.y) {
-            // borders are left and right
-            const borderWidth = (this.w - this.displayedArea.x * this.scale) / 2
-            this.snake = this.params.dots.map(([x,y])=>[
-                x*this.scale + borderWidth,
-                y*this.scale,
-            ])
-        } else {
-            const borderWidth = (this.h - this.displayedArea.y * this.scale) / 2
-            this.snake = this.params.dots.map(([x,y])=>[
-                x*this.scale,
-                y*this.scale + borderWidth,
-            ])
-        }
-         */
+    if (this.w / this.h  > this.displayedArea.x / this.displayedArea.y) {
+        // borders are left and right
+        const borderWidth = (this.w - this.displayedArea.x * this.scale) / 2
+        this.snake = this.params.dots.map(([x,y])=>[
+            x*this.scale + borderWidth,
+            y*this.scale,
+        ])
+    } else {
+        const borderWidth = (this.h - this.displayedArea.y * this.scale) / 2
+        this.snake = this.params.dots.map(([x,y])=>[
+            x*this.scale,
+            y*this.scale + borderWidth,
+        ])
+    }
+     */
 
     //console.log(this.snake);
 
