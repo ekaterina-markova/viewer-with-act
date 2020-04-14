@@ -69,6 +69,7 @@ window.config = {
     },
     // ~ Cornerstone Tools
     { commandName: 'setZoomTool', label: 'Zoom', keys: ['z'] },
+    { commandName: 'exitFromTools', label: 'ExitFromTools', keys: ['esc'] },
   ],
   cornerstoneExtensionConfig: {},
 };

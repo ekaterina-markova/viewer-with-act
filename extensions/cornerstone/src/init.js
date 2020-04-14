@@ -12,6 +12,7 @@ import {
   ActiveContourTool,
 } from './ohif-contour-tool/index.js';
 
+
 function fallbackMetaDataProvider(type, imageId) {
   if (!imageId.includes('wado?requestType=WADO')) {
     return;
@@ -148,7 +149,7 @@ export default function init({ servicesManager, configuration }) {
 
   csTools.addTool(ContourBrushTool);
   csTools.addTool(PencilMLTool, {
-    configuration: { backendHost: 'http://77.234.215.138:44052' },
+    configuration: { backendHost: process.env.PENCIL_ML_BACKEND_HOST },
   });
   csTools.addTool(ContourFillTool);
   csTools.addTool(ActiveContourTool);
