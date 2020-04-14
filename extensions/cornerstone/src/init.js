@@ -5,7 +5,13 @@ import initCornerstoneTools from './initCornerstoneTools.js';
 import queryString from 'query-string';
 import { SimpleDialog } from '@ohif/ui';
 import merge from 'lodash.merge';
-import { ContourBrushTool, PencilMLTool, ContourFillTool, ActiveContourTool } from 'ohif-contour-tool';
+import {
+  ContourBrushTool,
+  PencilMLTool,
+  ContourFillTool,
+  ActiveContourTool,
+} from './ohif-contour-tool/index.js';
+
 
 function fallbackMetaDataProvider(type, imageId) {
   if (!imageId.includes('wado?requestType=WADO')) {

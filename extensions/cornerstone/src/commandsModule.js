@@ -1,6 +1,7 @@
 import cornerstone from 'cornerstone-core';
 import cornerstoneTools from 'cornerstone-tools';
 import OHIF from '@ohif/core';
+import React from 'react';
 
 import { getEnabledElement } from './state';
 import CornerstoneViewportDownloadForm from './CornerstoneViewportDownloadForm';
@@ -76,6 +77,15 @@ const commandsModule = ({ servicesManager }) => {
     updateViewportDisplaySet: ({ direction }) => {
       // TODO
       console.warn('updateDisplaySet: ', direction);
+    },
+    myToolCommand: () => {
+      const { UIDialogService } = servicesManager.services;
+      if (UIDialogService) {
+        UIDialogService.create({
+          content: () => <div><p>Hello world</p></div>,
+          title: 'Hello worldddd',
+        });
+      }
     },
     clearAnnotations: ({ viewports }) => {
       const element = getEnabledElement(viewports.activeViewportIndex);
@@ -364,6 +374,10 @@ const commandsModule = ({ servicesManager }) => {
       commandFn: actions.setToolActive,
       storeContexts: [],
       options: {},
+    },
+    myToolCommand: {
+      commandFn: actions.myToolCommand,
+      storeContexts: [],
     },
     exitFromTools: {
       commandFn: actions.exitFromTools,
