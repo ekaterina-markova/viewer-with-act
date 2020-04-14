@@ -289,6 +289,14 @@ const definitions = [
       },
     ],
   },
+  {
+    id: 'MyTool',
+    label: 'MyTool',
+    icon: 'edit',
+    type: TOOLBAR_BUTTON_TYPES.SET_TOOL_ACTIVE,
+    commandName: 'myToolCommand',
+    commandOptions: { toolName: 'MyTool' },
+  },
 ];
 
 export default {

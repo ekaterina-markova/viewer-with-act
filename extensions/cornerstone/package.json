@@ -51,6 +51,6 @@
     "lodash.throttle": "^4.1.1",
     "query-string": "^6.8.3",
     "react-cornerstone-viewport": "2.x.x",
-    "ohif-contour-tool": "https://github.com/PencilML/ohif-contour-tool.git"
+    "ohif-contour-tool": "file:./src/ohif-contour-tool"
   }
 }

@@ -3,6 +3,7 @@ import asyncComponent from './asyncComponent.js';
 import commandsModule from './commandsModule.js';
 import toolbarModule from './toolbarModule.js';
 import CornerstoneViewportDownloadForm from './CornerstoneViewportDownloadForm';
+import { UIDialogService } from '@ohif/core';
 
 const OHIFCornerstoneViewport = asyncComponent(() =>
   import(
