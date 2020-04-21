@@ -9,7 +9,7 @@ import {
   ContourBrushTool,
   PencilMLTool,
   ContourFillTool,
-  ActiveContourTool,
+  ACTool,
 } from './ohif-contour-tool/index.js';
 
 
@@ -152,5 +152,9 @@ export default function init({ servicesManager, configuration }) {
     configuration: { backendHost: process.env.PENCIL_ML_BACKEND_HOST },
   });
   csTools.addTool(ContourFillTool);
-  csTools.addTool(ActiveContourTool);
+  csTools.addTool(ACTool, {
+    configuration: {
+      services: servicesManager.services,
+    },
+  });
 }

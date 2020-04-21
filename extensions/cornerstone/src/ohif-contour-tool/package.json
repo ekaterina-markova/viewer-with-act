@@ -15,7 +15,8 @@
   "dependencies": {
     "d3": "^5.14.2",
     "n-dimensional-flood-fill": "^1.0.0",
-    "stackblur-canvas": "^2.2.0"
+    "stackblur-canvas": "^2.2.0",
+    "mathjs": "^6.6.1"
   },
   "devDependencies": {
     "prettier": "^1.19.1",
