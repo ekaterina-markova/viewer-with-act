@@ -7,7 +7,7 @@ export default function computeKASS(image, width, height, initPoints, configValu
   const alpha = configValues.alpha || 2;
   const beta = configValues.beta || 0.5;
   const w_line = configValues.gamma || 0.5;
-  const w_edge = configValues.delta|| 0.5;
+  const w_edge = configValues.delta || 0.5;
   const maxDist = 4;
   const threshold = configValues.threshold || 120;
   const it = configValues.it || 100;
@@ -50,7 +50,7 @@ export default function computeKASS(image, width, height, initPoints, configValu
             prev,
             snakeLength,
             p,
-            snake.length
+            snake.length,
           );
           e_curvature[hks + dx][hks + dy] = f_curvature(prev, p, next);
           e_line[hks + dx][hks + dy] = f_line(p, binaryImage, width, height);
@@ -59,7 +59,7 @@ export default function computeKASS(image, width, height, initPoints, configValu
             gradientX,
             gradientY,
             width,
-            height
+            height,
           );
         }
       }

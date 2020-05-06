@@ -15,4 +15,4 @@ function dist(a, b) {
   return Math.sqrt(dx * dx + dy * dy);
 }
 
-export {init2DArray, dist}
+export { init2DArray, dist };

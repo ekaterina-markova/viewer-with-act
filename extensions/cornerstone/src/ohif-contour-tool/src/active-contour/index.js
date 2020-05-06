@@ -19,7 +19,7 @@ const activeContourCursor = new MouseCursor(
       x: 32,
       y: 32,
     },
-  }
+  },
 );
 
 export default class ACTool extends BaseBrushTool {
@@ -38,6 +38,7 @@ export default class ACTool extends BaseBrushTool {
     this._paint = this._paint.bind(this);
     this._init = this._init.bind(this);
     this._animate = this._animate.bind(this);
+    this.setSettings = this.setSettings.bind(this);
     this.lock = false;
     this.kassConfig = {};
     const { UIDialogService } = this.configuration.services;
@@ -52,8 +53,13 @@ export default class ACTool extends BaseBrushTool {
   }
 
   activeCallback() {
+    this.setSettings();
+  }
+
+  setSettings() {
+    this.lock = true;
     this.dialogId = this.services.UIDialogService.create({
-      centralize: true,
+      centralize: false,
       isDraggable: true,
       content: ACDialog.InputDialog,
       contentProps: {
@@ -62,6 +68,7 @@ export default class ACTool extends BaseBrushTool {
         onSubmit: value => {
           this.onDialogValueChanged(value);
           this.services.UIDialogService.dismiss({ id: this.dialogId });
+          this.lock = false;
         },
       },
     });
@@ -75,64 +82,65 @@ export default class ACTool extends BaseBrushTool {
     this.kassConfig = newValue;
   }
 
+
   _init(evt) {
 
-      //init points
-      this.coord = [];
-      this.lastState = [];
+    //init points
+    this.coord = [];
+    this.lastState = [];
 
-      const eventData = evt.detail;
+    const eventData = evt.detail;
 
-      // init image
-      const {rows, columns} = eventData.image;
-      this.width = columns;
-      this.height = rows;
+    // init image
+    const { rows, columns } = eventData.image;
+    this.width = columns;
+    this.height = rows;
 
-      const generalSeriesModuleMeta = cornerstone.metaData.get(
-        'generalSeriesModule',
-        eventData.image.imageId
-      );
+    const generalSeriesModuleMeta = cornerstone.metaData.get(
+      'generalSeriesModule',
+      eventData.image.imageId,
+    );
 
-      const pixelArray = eventData.image.getPixelData();
-      let grayScale;
+    const pixelArray = eventData.image.getPixelData();
+    let grayScale;
 
-      switch (generalSeriesModuleMeta.modality) {
-        case 'CT':
-          grayScale = pixelArray.map(value =>
-            Math.round(((value + 2048) / 4096) * 255)
-          );
-          break;
-        case "MR":
-          grayScale = pixelArray.map(value =>
-            Math.round((value / eventData.image.maxPixelValue) * 255)
-          );
-          break;
-
-        default:
-          grayScale = pixelArray;
-      }
-
-      this.imagePixelData = [];
-      for (let i = 0; i < rows; i++) {
-        this.imagePixelData.push(
-          Array.from(grayScale.slice(i * columns, (i + 1) * columns))
+    switch (generalSeriesModuleMeta.modality) {
+      case 'CT':
+        grayScale = pixelArray.map(value =>
+          Math.round(((value + 2048) / 4096) * 255),
         );
-      }
+        break;
+      case 'MR':
+        grayScale = pixelArray.map(value =>
+          Math.round((value / eventData.image.maxPixelValue) * 255),
+        );
+        break;
 
-      //create canvas layer
-      const canvas = document.getElementsByClassName(
-        'cornerstone-canvas'
-      )[0];
+      default:
+        grayScale = pixelArray;
+    }
 
-      const canvasAnimation = document.createElement('canvas');
-      canvasAnimation.className = "canvas-animate";
+    this.imagePixelData = [];
+    for (let i = 0; i < rows; i++) {
+      this.imagePixelData.push(
+        Array.from(grayScale.slice(i * columns, (i + 1) * columns)),
+      );
+    }
 
-      canvasAnimation.width = canvas.width;
-      canvasAnimation.height = canvas.height;
-      canvasAnimation.style.backgroundColor = 'rgba(255,255,255,0)';
-      canvasAnimation.style.position = 'absolute';
+    //create canvas layer
+    const canvas = document.getElementsByClassName(
+      'cornerstone-canvas',
+    )[0];
 
-      evt.detail.element.prepend(canvasAnimation);
+    const canvasAnimation = document.createElement('canvas');
+    canvasAnimation.className = 'canvas-animate';
+
+    canvasAnimation.width = canvas.width;
+    canvasAnimation.height = canvas.height;
+    canvasAnimation.style.backgroundColor = 'rgba(255,255,255,0)';
+    canvasAnimation.style.position = 'absolute';
+
+    evt.detail.element.prepend(canvasAnimation);
   }
 
   preMouseDownCallback(evt) {
@@ -146,7 +154,7 @@ export default class ACTool extends BaseBrushTool {
 
       this._init(evt);
       const eventData = evt.detail;
-      const {element, currentPoints} = eventData;
+      const { element, currentPoints } = eventData;
 
       this._drawing = true;
       super._startListeningForMouseUp(element);
@@ -168,7 +176,7 @@ export default class ACTool extends BaseBrushTool {
 
   _drawingMouseUpCallback(evt) {
     const eventData = evt.detail;
-    const {element, currentPoints} = eventData;
+    const { element, currentPoints } = eventData;
     this.finishCoords = currentPoints.image;
     this._drawing = false;
     super._stopListeningForMouseUp(element);
@@ -183,7 +191,7 @@ export default class ACTool extends BaseBrushTool {
       this.width,
       this.height,
       [...this.coord.map(it => [...it])],
-      this.kassConfig
+      this.kassConfig,
     );
 
     console.log(this.result);
@@ -198,15 +206,15 @@ export default class ACTool extends BaseBrushTool {
 
   _animate(evt) {
 
-    let stopped = false
+    let stopped = false;
     document.addEventListener('keypress', (event) => {
-      if (event.key === 'q') stopped = true
-    })
+      if (event.key === 'q') stopped = true;
+    });
 
     let it = 0;
     const scope = this;
     const canvas = document.getElementsByClassName(
-      'canvas-animate'
+      'canvas-animate',
     )[0];
     const ctx = canvas.getContext('2d');
     ctx.strokeStyle = 'rgb(0,255,0)';
@@ -214,7 +222,7 @@ export default class ACTool extends BaseBrushTool {
     ctx.setTransform(transform.m[0], transform.m[1], transform.m[2], transform.m[3], transform.m[4], transform.m[5]);
 
     scope.lock = true;
-    let timerId = setInterval(function () {
+    let timerId = setInterval(function() {
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.beginPath();
@@ -244,11 +252,11 @@ export default class ACTool extends BaseBrushTool {
   _paint(evt) {
 
     console.log('finish');
-    const {element} = evt.detail;
+    const { element } = evt.detail;
 
     //drawBrushPixel
     const lastContours = this.lastState;
-    const {getters} = segmentationModule;
+    const { getters } = segmentationModule;
     const {
       labelmap2D,
       labelmap3D,
@@ -259,11 +267,12 @@ export default class ACTool extends BaseBrushTool {
       labelmap2D.pixelData,
       labelmap3D.activeSegmentIndex,
       this.width,
-      false
+      false,
     );
 
     cornerstone.updateImage(element);
     csTools.setToolActive('StackScrollMouseWheel', {});
+    //this.setSettings();
 
   }
 
@@ -276,11 +285,11 @@ export default class ACTool extends BaseBrushTool {
       let mouseEndPosition;
       mouseEndPosition = this._lastImageCoords;
 
-      context.strokeStyle = "rgba(0,255,0)";
+      context.strokeStyle = 'rgba(0,255,0)';
       this.coord.push([mouseEndPosition.x.valueOf(), mouseEndPosition.y.valueOf()]);
 
       const canvas = document.getElementsByClassName(
-        'cornerstone-canvas'
+        'cornerstone-canvas',
       )[0];
       const transform = calculateTransform(eventData, canvas);
       context.setTransform(transform.m[0], transform.m[1], transform.m[2], transform.m[3], transform.m[4], transform.m[5]);
