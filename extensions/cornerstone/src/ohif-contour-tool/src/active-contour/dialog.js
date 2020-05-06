@@ -1,6 +1,6 @@
 import React, { Component, useState } from 'react';
 import PropTypes from 'prop-types';
-import { TextInput } from '@ohif/ui';
+import { TextInput, Range } from '@ohif/ui';
 
 class ACDialog extends Component {
   static propTypes = {
@@ -20,25 +20,19 @@ class ACDialog extends Component {
   };
 
   static InputDialog = ({ onSubmit, title, onClose }) => {
-    const [kernelSize, setKernelSize] = useState(4);
     const [alpha, setAlpha] = useState(2);
     const [beta, setBeta] = useState(0.5);
-    const [wLine, setWLine] = useState(0.5);
-    const [wEdge, setWEdge] = useState(0.5);
-    const [minDist, setMinDist] = useState(3);
-    const [maxDist, setMaxDist] = useState(6);
-    const [threshold, setThreshold] = useState(90);
+    const [gamma, setWLine] = useState(0.5);
+    const [delta, setWEdge] = useState(0.5);
+    const [threshold, setThreshold] = useState(120);
     const [it, setIt] = useState(100);
 
     const onSubmitHandler = () => {
       onSubmit({
-        kernelSize,
         alpha,
         beta,
-        wLine,
-        wEdge,
-        minDist,
-        maxDist,
+        gamma,
+        delta,
         threshold,
       });
     };
@@ -46,13 +40,6 @@ class ACDialog extends Component {
     return (
       <div className="InputDialog">
         <ACDialog onClose={onClose} onConfirm={onSubmitHandler}>
-          <TextInput
-            type="text"
-            value={kernelSize}
-            onChange={event => setKernelSize(event.target.value)}
-            label="KernelSize"
-            id="KernelSize"
-          />
           <TextInput
             type="text"
             value={alpha}
@@ -69,31 +56,17 @@ class ACDialog extends Component {
           />
           <TextInput
             type="text"
-            value={wLine}
+            value={gamma}
             onChange={event => setWLine(event.target.value)}
-            label="WLine"
-            id="WLine"
+            label="Gamma"
+            id="Gamma"
           />
           <TextInput
             type="text"
-            value={wEdge}
+            value={delta}
             onChange={event => setWEdge(event.target.value)}
-            label="WEdge"
-            id="WEdge"
-          />
-          <TextInput
-            type="text"
-            value={minDist}
-            onChange={event => setMinDist(event.target.value)}
-            label="MinDist"
-            id="MinDist"
-          />
-          <TextInput
-            type="text"
-            value={maxDist}
-            onChange={event => setMaxDist(event.target.value)}
-            label="MaxDist"
-            id="MaxDist"
+            label="Delta"
+            id="Delta"
           />
           <TextInput
             type="text"
@@ -102,6 +75,7 @@ class ACDialog extends Component {
             label="Threshold"
             id="Threshold"
           />
+
           <TextInput
             type="text"
             value={it}

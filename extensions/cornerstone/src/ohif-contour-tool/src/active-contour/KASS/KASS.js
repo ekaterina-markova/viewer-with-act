@@ -2,24 +2,20 @@ import { thresholding, countGradient } from './preprocessing';
 import { dist, init2DArray } from './utils';
 
 export default function computeKASS(image, width, height, initPoints, configValues = {}) {
-  // CT
-  let kernelSize = configValues.kernelSize || 4;
-  let alpha = configValues.alpha || 2;
-  let beta = configValues.beta || 0.5;
-  let w_line = configValues.wLine || 0.5;
-  let w_edge = configValues.wEdge || 0.5;
-  let minDist = configValues.minDist || 3;
-  let maxDist = configValues.maxDist || 6;
-  let threshold = configValues.threshold || 90;
-  let it = configValues.it || 100;
+
+  const kernelSize = 4;
+  const alpha = configValues.alpha || 2;
+  const beta = configValues.beta || 0.5;
+  const w_line = configValues.gamma || 0.5;
+  const w_edge = configValues.delta|| 0.5;
+  const maxDist = 4;
+  const threshold = configValues.threshold || 120;
+  const it = configValues.it || 100;
 
   console.log('configValues');
   console.log({
     configValues,
   });
-
-  //добавить тип снимка, расчет параметров в зависимости от типа, режим контура, инициализация алгоритма в зависимости от этого
-  //
 
   let contours = [];
   let snake = initPoints;
