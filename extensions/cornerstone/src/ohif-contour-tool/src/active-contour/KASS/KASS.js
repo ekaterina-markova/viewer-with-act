@@ -1,5 +1,6 @@
 import { thresholding, countGradient } from './preprocessing';
 import { dist, init2DArray } from './utils';
+import { mean } from 'mathjs';
 
 export default function computeKASS(image, width, height, initPoints, configValues = {}) {
 
@@ -8,14 +9,12 @@ export default function computeKASS(image, width, height, initPoints, configValu
   const beta = configValues.beta || 0.5;
   const w_line = configValues.gamma || 0.5;
   const w_edge = configValues.delta || 0.5;
-  const maxDist = 4;
+  const maxDist = 6;
   const threshold = configValues.threshold || 120;
   const it = configValues.it || 100;
 
-  console.log('configValues');
-  console.log({
-    configValues,
-  });
+  let testThreshold = 0.33 * mean(image);
+  console.log(testThreshold);
 
   let contours = [];
   let snake = initPoints;

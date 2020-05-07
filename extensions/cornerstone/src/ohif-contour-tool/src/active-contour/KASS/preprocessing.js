@@ -56,7 +56,7 @@ function Gauss(data, sigma) {
 
 function Sobel(data, w, h) {
 
-  let channelGradient = Gauss(data, 1);
+  let channelGradient = Gauss(data, 2);
   for (let y = 0; y < h - 2; y++) {
     for (let x = 0; x < w - 2; x++) {
       let p00 = data[y][x];
@@ -80,7 +80,7 @@ function Sobel(data, w, h) {
 function countGradient(image, w, h) {
 
   let imageSobel = Sobel(image, w, h);
-  let channelGradient = Gauss(imageSobel, 2);//sobel
+  let channelGradient = Gauss(imageSobel, 1);
   let gradX = init2DArray(h, w);
   let gradY = init2DArray(h, w);
 

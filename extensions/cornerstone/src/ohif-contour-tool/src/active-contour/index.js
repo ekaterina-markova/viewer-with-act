@@ -39,11 +39,13 @@ export default class ACTool extends BaseBrushTool {
     this._init = this._init.bind(this);
     this._animate = this._animate.bind(this);
     this.setSettings = this.setSettings.bind(this);
-    this.lock = false;
+    this.formLock = false;
+    this.animateLock = false;
     this.kassConfig = {};
-    const { UIDialogService } = this.configuration.services;
+    const { UIDialogService, UINotificationService } = this.configuration.services;
     this.services = {
       UIDialogService,
+      UINotificationService,
     };
     this.dialogId = null;
   }
@@ -57,7 +59,7 @@ export default class ACTool extends BaseBrushTool {
   }
 
   setSettings() {
-    this.lock = true;
+    this.formLock = true;
     this.dialogId = this.services.UIDialogService.create({
       centralize: false,
       isDraggable: true,
@@ -68,7 +70,7 @@ export default class ACTool extends BaseBrushTool {
         onSubmit: value => {
           this.onDialogValueChanged(value);
           this.services.UIDialogService.dismiss({ id: this.dialogId });
-          this.lock = false;
+          this.formLock = false;
         },
       },
     });
@@ -145,7 +147,11 @@ export default class ACTool extends BaseBrushTool {
 
   preMouseDownCallback(evt) {
 
-    if (this.lock) {
+    if (this.formLock) {
+      this.services.UINotificationService.show({ title: 'Info', message: 'Confirm or close settings' });
+      return;
+    } else if (this.animateLock) {
+      this.services.UINotificationService.show({ title: 'Info', message: 'You can\'t draw during animation' });
       return;
     } else {
 
@@ -180,9 +186,6 @@ export default class ACTool extends BaseBrushTool {
     this.finishCoords = currentPoints.image;
     this._drawing = false;
     super._stopListeningForMouseUp(element);
-
-    console.log('init');
-    console.log(this.coord);
 
     console.log('result');
 
@@ -221,7 +224,7 @@ export default class ACTool extends BaseBrushTool {
     const transform = calculateTransform(evt.detail, canvas);
     ctx.setTransform(transform.m[0], transform.m[1], transform.m[2], transform.m[3], transform.m[4], transform.m[5]);
 
-    scope.lock = true;
+    scope.animateLock = true;
     let timerId = setInterval(function() {
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -242,7 +245,7 @@ export default class ACTool extends BaseBrushTool {
         canvas.remove();
         scope.lastState = scope.result[it];
         scope._paint(evt);
-        scope.lock = false;
+        scope.animateLock = false;
       }
       it++;
     }, 700);
@@ -272,7 +275,6 @@ export default class ACTool extends BaseBrushTool {
 
     cornerstone.updateImage(element);
     csTools.setToolActive('StackScrollMouseWheel', {});
-    //this.setSettings();
 
   }
 
