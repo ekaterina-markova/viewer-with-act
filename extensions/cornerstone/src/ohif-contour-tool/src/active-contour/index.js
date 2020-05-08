@@ -48,6 +48,9 @@ export default class ACTool extends BaseBrushTool {
       UINotificationService,
     };
     this.dialogId = null;
+
+    //document.addEventListener('keypress',this.callSettings);
+    //this.callSettings = this.callSettings.bind(this);
   }
 
   passiveCallback() {
@@ -57,7 +60,14 @@ export default class ACTool extends BaseBrushTool {
   activeCallback() {
     this.setSettings();
   }
-
+/*
+  callSettings(evt){
+    const scope = this;
+    if(evt.key==='s' && !scope.formLock && !scope.animateLock){
+      scope.setSettings();
+    }
+  }
+ */
   setSettings() {
     this.formLock = true;
     this.dialogId = this.services.UIDialogService.create({
@@ -188,8 +198,13 @@ export default class ACTool extends BaseBrushTool {
     super._stopListeningForMouseUp(element);
 
     console.log('result');
+    const generalSeriesModuleMeta = cornerstone.metaData.get(
+      'generalSeriesModule',
+      eventData.image.imageId,
+    );
 
     this.result = computeKASS(
+      generalSeriesModuleMeta.modality,
       this.imagePixelData,
       this.width,
       this.height,
@@ -211,7 +226,7 @@ export default class ACTool extends BaseBrushTool {
 
     let stopped = false;
     document.addEventListener('keypress', (event) => {
-      if (event.key === 'q') stopped = true;
+      if (event.code === 'KeyQ') stopped = true;
     });
 
     let it = 0;

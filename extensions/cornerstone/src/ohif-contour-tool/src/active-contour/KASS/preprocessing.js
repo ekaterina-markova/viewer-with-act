@@ -1,11 +1,15 @@
-import {init2DArray} from "./utils";
+import { init2DArray } from './utils';
 import * as tf from '@tensorflow/tfjs';
 
-function thresholding(threshold, w, h, image) {
+function thresholding(threshold, w, h, image, inv = false) {
   let binary = init2DArray(h, w);
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
-      binary[y][x] = image[y][x] > threshold ? 1 : 0;
+      if (inv) {
+        binary[y][x] = image[y][x] > threshold ? 0 : 1;
+      } else {
+        binary[y][x] = image[y][x] > threshold ? 1 : 0;
+      }
     }
   }
   return binary;
@@ -56,7 +60,7 @@ function Gauss(data, sigma) {
 
 function Sobel(data, w, h) {
 
-  let channelGradient = Gauss(data, 2);
+  let channelGradient = init2DArray(h, w);
   for (let y = 0; y < h - 2; y++) {
     for (let x = 0; x < w - 2; x++) {
       let p00 = data[y][x];
@@ -77,20 +81,19 @@ function Sobel(data, w, h) {
   return channelGradient;
 }
 
-function countGradient(image, w, h) {
+function countGradient(data, w, h) {
 
-  let imageSobel = Sobel(image, w, h);
-  let channelGradient = Gauss(imageSobel, 1);
-  let gradX = init2DArray(h, w);
-  let gradY = init2DArray(h, w);
+  let channelGradient = data;
+  let gradX = init2DArray(w, h);
+  let gradY = init2DArray(w, h);
 
   let sl1 = channelGradient.slice(1);
   let sl2 = channelGradient.slice(channelGradient.length - 2, channelGradient.length - 1);
-  let vstack1 = sl1.concat(sl2)
+  let vstack1 = sl1.concat(sl2);
 
   let sl3 = channelGradient.slice(0, 1);
   let sl4 = channelGradient.slice(0, channelGradient.length - 1);
-  let vstack2 = sl3.concat(sl4)
+  let vstack2 = sl3.concat(sl4);
 
   for (let i = 0; i < gradY.length; i++) {
     for (let j = 0; j < gradY[i].length; j++) {
@@ -103,14 +106,14 @@ function countGradient(image, w, h) {
     let sl = rows.slice(1);
     sl.push(rows[rows.length - 2]);
     hstack1.push(sl);
-  })
+  });
 
   let hstack2 = [];
   channelGradient.forEach((rows) => {
     let sl = rows.slice(0, rows.length - 1);
     sl.unshift(rows[0]);
     hstack2.push(sl);
-  })
+  });
 
   for (let i = 0; i < gradX.length; i++) {
     for (let j = 0; j < gradX[i].length; j++) {
@@ -122,4 +125,4 @@ function countGradient(image, w, h) {
 
 }
 
-export {thresholding, countGradient};
+export { thresholding, countGradient, Sobel, Gauss };

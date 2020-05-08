@@ -1,10 +1,10 @@
-import { thresholding, countGradient } from './preprocessing';
+import { thresholding, countGradient, Sobel, Gauss } from './preprocessing';
 import { dist, init2DArray } from './utils';
 import { mean } from 'mathjs';
 
-export default function computeKASS(image, width, height, initPoints, configValues = {}) {
+export default function computeKASS(type, image, width, height, initPoints, configValues = {}) {
 
-  const kernelSize = 4;
+  const kernelSize = 5;
   const alpha = configValues.alpha || 2;
   const beta = configValues.beta || 0.5;
   const w_line = configValues.gamma || 0.5;
@@ -13,17 +13,32 @@ export default function computeKASS(image, width, height, initPoints, configValu
   const threshold = configValues.threshold || 120;
   const it = configValues.it || 100;
 
-  let testThreshold = 0.33 * mean(image);
-  console.log(testThreshold);
+  //let testThreshold = 0.33 * mean(image);
+  //console.log(testThreshold);
 
   let contours = [];
   let snake = initPoints;
   let snakeLength = 0;
+  let binaryImage, gradient, gradientX, gradientY;
 
-  let gradient = countGradient(image, width, height);
-  const binaryImage = thresholding(threshold, width, height, image);
-  const gradientX = gradient[0];
-  const gradientY = gradient[1];
+  if (type === 'CT') {
+    let filterGauss = Gauss(image, 3);
+    let filterSobel = Sobel(filterGauss, width, height);
+    filterGauss = Gauss(filterSobel, 3);
+    gradient = countGradient(filterGauss, width, height);
+    binaryImage = thresholding(threshold, width, height, image);
+    gradientX = gradient[0];
+    gradientY = gradient[1];
+
+  } else if (type === 'MR') {
+    let invThresh = thresholding(threshold, width, height, image, true);
+    let filterGauss = Gauss(invThresh, 1.0);
+    gradient = countGradient(filterGauss, width, height);
+    gradientX = gradient[0];
+    gradientY = gradient[1];
+    binaryImage = Sobel(image, width, height);
+
+  }
 
   for (let i = 0; i < it; i++) {
     snakeLength = getSnakelength(snake);
