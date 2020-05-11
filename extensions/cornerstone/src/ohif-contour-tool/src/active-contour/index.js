@@ -1,6 +1,6 @@
 import csTools from 'cornerstone-tools';
 import cornerstone from 'cornerstone-core';
-import computeKASS from './KASS/KASS';
+import KASS from './KASS/KASS';
 import { ACDialog } from './dialog';
 import calculateTransform from './utils/calculateTransform';
 
@@ -60,14 +60,15 @@ export default class ACTool extends BaseBrushTool {
   activeCallback() {
     this.setSettings();
   }
-/*
-  callSettings(evt){
-    const scope = this;
-    if(evt.key==='s' && !scope.formLock && !scope.animateLock){
-      scope.setSettings();
+
+  /*
+    callSettings(evt){
+      const scope = this;
+      if(evt.key==='s' && !scope.formLock && !scope.animateLock){
+        scope.setSettings();
+      }
     }
-  }
- */
+   */
   setSettings() {
     this.formLock = true;
     this.dialogId = this.services.UIDialogService.create({
@@ -202,8 +203,7 @@ export default class ACTool extends BaseBrushTool {
       'generalSeriesModule',
       eventData.image.imageId,
     );
-
-    this.result = computeKASS(
+    const acm = new KASS(
       generalSeriesModuleMeta.modality,
       this.imagePixelData,
       this.width,
@@ -211,6 +211,7 @@ export default class ACTool extends BaseBrushTool {
       [...this.coord.map(it => [...it])],
       this.kassConfig,
     );
+    this.result = acm.compute();
 
     console.log(this.result);
     if (this.result === undefined || this.result === []) {
@@ -236,6 +237,7 @@ export default class ACTool extends BaseBrushTool {
     )[0];
     const ctx = canvas.getContext('2d');
     ctx.strokeStyle = 'rgb(0,255,0)';
+    ctx.lineWidth = 0.5;
     const transform = calculateTransform(evt.detail, canvas);
     ctx.setTransform(transform.m[0], transform.m[1], transform.m[2], transform.m[3], transform.m[4], transform.m[5]);
 
@@ -303,6 +305,7 @@ export default class ACTool extends BaseBrushTool {
       mouseEndPosition = this._lastImageCoords;
 
       context.strokeStyle = 'rgba(0,255,0)';
+      context.lineWidth = 0.5;
       this.coord.push([mouseEndPosition.x.valueOf(), mouseEndPosition.y.valueOf()]);
 
       const canvas = document.getElementsByClassName(

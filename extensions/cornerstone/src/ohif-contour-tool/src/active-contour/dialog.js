@@ -20,11 +20,11 @@ class ACDialog extends Component {
   };
 
   static InputDialog = ({ onSubmit, title, onClose }) => {
-    const [alpha, setAlpha] = useState(2);
-    const [beta, setBeta] = useState(0.5);
-    const [gamma, setWLine] = useState(0.5);
-    const [delta, setWEdge] = useState(0.5);
-    const [threshold, setThreshold] = useState(120);
+    const [alpha, setAlpha] = useState(1);
+    const [beta, setBeta] = useState(0.2);
+    const [gamma, setWLine] = useState(1);
+    const [delta, setWEdge] = useState(1);
+    const [threshold, setThreshold] = useState(6);
     const [it, setIt] = useState(100);
 
     const onSubmitHandler = () => {
@@ -72,7 +72,7 @@ class ACDialog extends Component {
             type="text"
             value={threshold}
             onChange={event => setThreshold(event.target.value)}
-            label="Threshold"
+            label="Distance"
             id="Threshold"
           />
 
