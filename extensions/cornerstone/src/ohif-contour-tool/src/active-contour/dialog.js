@@ -1,6 +1,6 @@
 import React, { Component, useState } from 'react';
 import PropTypes from 'prop-types';
-import { TextInput, Range } from '@ohif/ui';
+import { TextInput, Range, Tooltip } from '@ohif/ui';
 
 class ACDialog extends Component {
   static propTypes = {
@@ -76,13 +76,20 @@ class ACDialog extends Component {
             id="Threshold"
           />
 
-          <TextInput
-            type="text"
+          <label>
+            Iterations:
+          <input
+            type="range"
+            name="Iterations"
+            min={10}
+            max={200}
+            step={5}
             value={it}
-            onChange={event => setIt(event.target.value)}
-            label="Iterations"
+            onChange={event => setIt(parseInt(event.target.value))}
             id="Iterations"
           />
+          </label>
+
         </ACDialog>
       </div>
     );
