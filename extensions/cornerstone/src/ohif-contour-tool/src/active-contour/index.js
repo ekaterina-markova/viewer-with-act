@@ -3,6 +3,7 @@ import cornerstone from 'cornerstone-core';
 import KASS from './KASS/KASS';
 import { ACDialog } from './dialog';
 import calculateTransform from './utils/calculateTransform';
+import ACM from './KASS/ACM';
 
 const { drawBrushPixels } = csTools.importInternal('util/segmentationUtils');
 const segmentationModule = csTools.getModule('segmentation');
@@ -203,6 +204,7 @@ export default class ACTool extends BaseBrushTool {
       'generalSeriesModule',
       eventData.image.imageId,
     );
+    /*
     const acm = new KASS(
       generalSeriesModuleMeta.modality,
       this.imagePixelData,
@@ -213,6 +215,15 @@ export default class ACTool extends BaseBrushTool {
     );
     this.result = acm.compute();
 
+     */
+    const acm = new ACM(
+      this.kassConfig,
+      this.width,
+      this.height,
+      this.imagePixelData,
+      [...this.coord.map(it => [...it])],
+    );
+    this.result = acm.loop();
     console.log(this.result);
     if (this.result === undefined || this.result === []) {
       this.lastState = [...this.coord.map(it => [...it])];
