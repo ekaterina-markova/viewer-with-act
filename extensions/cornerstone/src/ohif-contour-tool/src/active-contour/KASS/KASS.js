@@ -5,11 +5,12 @@ export default class KASS {
 
   constructor(type, image, width, height, initPoints, configValues = {}) {
     this.kernelSize = 5;
-    this.alpha = configValues.alpha || 1;
-    this.beta = configValues.beta || 0.2;
-    this.delta = configValues.delta || 1;//wLine
-    this.gamma = configValues.gamma || 1;//wEdge
-    this.maxDist = configValues.threshold || 6;
+    const externalEnergy = configValues.externalEnergy || 1;
+    this.alpha = configValues.alpha||1;
+    this.beta = configValues.beta||0.1;
+    this.delta = externalEnergy / 2;
+    this.gamma = externalEnergy / 2;
+    this.maxDist = configValues.distance || 6;
     this.it = configValues.it || 100;
     this.width = width;
     this.height = height;
@@ -20,9 +21,9 @@ export default class KASS {
 
     if (type === 'CT') {
       const threshold = 60;
-      let filterGauss = Gauss(image, 3);
+      let filterGauss = Gauss(image, 3);//3
       let filterSobel = Sobel(filterGauss, width, height);
-      filterGauss = Gauss(filterSobel, 3);
+      filterGauss = Gauss(filterSobel, 3);//3
       gradient = countGradient(filterGauss, width, height);
       this.binaryImage = thresholding(threshold, width, height, image);
       this.gradientX = gradient[0];
@@ -101,7 +102,7 @@ export default class KASS {
       }
       this.snake = this.rebuild(newSnake, this.maxDist);
 
-      if (this.getSnakelength(newSnake) !== 0 && (Math.abs(1 - snakeLength / this.getSnakelength(this.snake)) > 0.005)) {
+      if (this.getSnakelength(newSnake) !== 0) {
         this.contours.push(this.snake);
       }
     }

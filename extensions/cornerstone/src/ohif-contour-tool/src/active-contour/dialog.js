@@ -21,19 +21,17 @@ class ACDialog extends Component {
 
   static InputDialog = ({ onSubmit, title, onClose }) => {
     const [alpha, setAlpha] = useState(1);
-    const [beta, setBeta] = useState(0.2);
-    const [gamma, setWLine] = useState(1);
-    const [delta, setWEdge] = useState(1);
-    const [threshold, setThreshold] = useState(6);
+    const [beta, setBeta] = useState(0.1);
+    const [externalEnergy, setExternalEnergy] = useState(1);
+    const [distance, setDistance] = useState(6);
     const [it, setIt] = useState(100);
 
     const onSubmitHandler = () => {
       onSubmit({
         alpha,
         beta,
-        gamma,
-        delta,
-        threshold,
+        externalEnergy,
+        distance,
       });
     };
 
@@ -44,41 +42,33 @@ class ACDialog extends Component {
             type="text"
             value={alpha}
             onChange={event => setAlpha(event.target.value)}
-            label="Alpha"
+            label="Elasticity"
             id="Alpha"
           />
           <TextInput
             type="text"
             value={beta}
             onChange={event => setBeta(event.target.value)}
-            label="Beta"
+            label="Inflexibility"
             id="Beta"
           />
           <TextInput
             type="text"
-            value={gamma}
-            onChange={event => setWLine(event.target.value)}
-            label="Gamma"
-            id="Gamma"
+            value={externalEnergy}
+            onChange={event => setExternalEnergy(event.target.value)}
+            label="External Energy"
+            id="ExternalEnergy"
           />
           <TextInput
             type="text"
-            value={delta}
-            onChange={event => setWEdge(event.target.value)}
-            label="Delta"
-            id="Delta"
-          />
-          <TextInput
-            type="text"
-            value={threshold}
-            onChange={event => setThreshold(event.target.value)}
+            value={distance}
+            onChange={event => setDistance(event.target.value)}
             label="Distance"
-            id="Threshold"
+            id="Distance"
           />
-
           <label>
             Iterations:
-          <input
+          <Range
             type="range"
             name="Iterations"
             min={10}
