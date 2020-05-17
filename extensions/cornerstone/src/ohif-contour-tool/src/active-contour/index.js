@@ -277,7 +277,7 @@ export default class ACTool extends BaseBrushTool {
         scope.animateLock = false;
       }
       it++;
-    }, 700);
+    }, 500);
   }
 
 
