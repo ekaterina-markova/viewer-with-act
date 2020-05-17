@@ -1,6 +1,7 @@
 import csTools from 'cornerstone-tools';
 import cornerstone from 'cornerstone-core';
 import KASS from './KASS/KASS';
+import ACM from './KASS/ACM';
 import { ACDialog } from './dialog';
 import calculateTransform from './utils/calculateTransform';
 
@@ -203,14 +204,14 @@ export default class ACTool extends BaseBrushTool {
       'generalSeriesModule',
       eventData.image.imageId,
     );
-    const acm = new KASS(
-      generalSeriesModuleMeta.modality,
+    const acm = new ACM(
       this.imagePixelData,
       this.width,
       this.height,
       [...this.coord.map(it => [...it])],
       this.kassConfig,
     );
+
     this.result = acm.compute();
 
     console.log(this.result);

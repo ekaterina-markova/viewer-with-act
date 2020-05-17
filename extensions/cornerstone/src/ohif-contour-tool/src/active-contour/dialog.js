@@ -20,18 +20,19 @@ class ACDialog extends Component {
   };
 
   static InputDialog = ({ onSubmit, title, onClose }) => {
-    const [alpha, setAlpha] = useState(1);
-    const [beta, setBeta] = useState(0.1);
-    const [externalEnergy, setExternalEnergy] = useState(1);
-    const [distance, setDistance] = useState(6);
+    const [alpha, setAlpha] = useState(1.1);
+    const [beta, setBeta] = useState(1.2);
+    const [gamma, setGamma] = useState(1.5);
+    const [threshold, setThreshold] = useState(60);
     const [it, setIt] = useState(100);
 
     const onSubmitHandler = () => {
       onSubmit({
         alpha,
         beta,
-        externalEnergy,
-        distance,
+        gamma,
+        threshold,
+        it,
       });
     };
 
@@ -42,29 +43,29 @@ class ACDialog extends Component {
             type="text"
             value={alpha}
             onChange={event => setAlpha(event.target.value)}
-            label="Elasticity"
+            label="Alpha"
             id="Alpha"
           />
           <TextInput
             type="text"
             value={beta}
             onChange={event => setBeta(event.target.value)}
-            label="Inflexibility"
+            label="Beta"
             id="Beta"
           />
           <TextInput
             type="text"
-            value={externalEnergy}
-            onChange={event => setExternalEnergy(event.target.value)}
-            label="External Energy"
-            id="ExternalEnergy"
+            value={gamma}
+            onChange={event => setGamma(event.target.value)}
+            label="Gamma"
+            id="Gamma"
           />
           <TextInput
             type="text"
-            value={distance}
-            onChange={event => setDistance(event.target.value)}
-            label="Distance"
-            id="Distance"
+            value={threshold}
+            onChange={event => setThreshold(event.target.value)}
+            label="Threshold"
+            id="Threshold"
           />
           <label>
             Iterations:
