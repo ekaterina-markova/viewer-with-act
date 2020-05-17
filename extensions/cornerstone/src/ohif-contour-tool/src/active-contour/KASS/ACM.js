@@ -1,4 +1,5 @@
-import { thresholding } from './preprocessing';
+import { thresholding,Gauss} from './preprocessing';
+import { init2DArray } from './utils';
 
 export default class ACM {
   constructor(configValues = {}, width, height, imageData, initPoints) {
@@ -8,8 +9,9 @@ export default class ACM {
     this.w = width;
     this.h = height;
     this.snake = initPoints;
-    const threshold = configValues.threshold || 60;
-    const binaryImage = thresholding(threshold, width, height, imageData);
+    const threshold = configValues.threshold || 50;
+    const imageBlur = Gauss(imageData,0.05);
+    const binaryImage = binSobel(imageBlur, width, height, threshold);
 
     const result = ChamferDistance.compute(ChamferDistance.chamfer13, binaryImage, threshold, width, height);
     this.flowX = result[0];
@@ -27,10 +29,8 @@ export default class ACM {
         if (p[0] <= 0 || p[0] >= scope.w - 1 || p[1] <= 0 || p[1] >= scope.h - 1) return;
         const vx = (.5 - scope.flowX[~~(p[0])][~~(p[1])]) * 2;
         const vy = (.5 - scope.flowY[~~(p[0])][~~(p[1])]) * 2;
-        //p[0] += vx * 100;
-        //p[1] += vy * 100;
-        const x = p[0] + vx * 100;
-        const y = p[1] + vy * 100;
+        const x = p[0] + vx * 100;//100; //parameter
+        const y = p[1] + vy * 100;//100;
         newsnake.push([x, y]);
       });
 
@@ -200,3 +200,29 @@ export const ChamferDistance = function(chamfer) {
 
   return chamfer;
 }({});
+
+function binSobel(data, w, h, threshold) {
+  let channelGradient = init2DArray(h, w);
+  for (let y = 0; y < h - 2; y++) {
+    for (let x = 0; x < w - 2; x++) {
+      let p00 = data[y][x];
+      let p10 = data[y][x + 1];
+      let p20 = data[y][x + 2];
+      let p01 = data[y + 1][x];
+      let p21 = data[y + 1][x + 2];
+      let p02 = data[y + 2][x];
+      let p12 = data[y + 2][x + 1];
+      let p22 = data[y + 2][x + 2];
+      let sx = (p20 + 2 * p21 + p22) - (p00 + 2 * p01 + p02);
+      let sy = (p02 + 2 * p12 + p22) - (p00 + 2 * p10 + p10);
+      let snorm = Math.floor(Math.sqrt(sx * sx + sy * sy));
+      if (snorm > threshold) {
+        channelGradient[y + 1][x + 1] = 1;
+      } else {
+        channelGradient[y + 1][x + 1] = 0;
+      }
+    }
+  }
+
+  return channelGradient;
+}
