@@ -247,14 +247,14 @@ export default class ACTool extends BaseBrushTool {
       'canvas-animate',
     )[0];
     const ctx = canvas.getContext('2d');
-    ctx.strokeStyle = 'rgb(0,255,0)';
+    ctx.strokeStyle = 'rgba(255, 0, 0,1)';
+    ctx.fillStyle = 'rgba(255, 0, 0,0.4)';
     ctx.lineWidth = 0.5;
     const transform = calculateTransform(evt.detail, canvas);
     ctx.setTransform(transform.m[0], transform.m[1], transform.m[2], transform.m[3], transform.m[4], transform.m[5]);
 
     scope.animateLock = true;
     let timerId = setInterval(function() {
-
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.beginPath();
       let x = scope.result[it][0][0];
@@ -267,6 +267,7 @@ export default class ACTool extends BaseBrushTool {
       }
       ctx.closePath();
       ctx.stroke();
+      ctx.fill();
 
       if (it === scope.result.length - 1 || stopped) {
         clearInterval(timerId);

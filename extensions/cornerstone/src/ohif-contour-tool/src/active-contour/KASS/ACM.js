@@ -1,17 +1,16 @@
-import { thresholding,Gauss} from './preprocessing';
+import { thresholding,Gauss,countGradient,Sobel} from './preprocessing';
 import { init2DArray } from './utils';
 
 export default class ACM {
   constructor(configValues = {}, width, height, imageData, initPoints) {
     this.maxIterations = configValues.it || 100;
-    this.minlen = 0.3;//Math.pow(.1, 2);
+    this.minlen = 0.5;//Math.pow(.1, 2);
     this.maxlen = 6;//Math.pow(5, 1);
     this.w = width;
     this.h = height;
     this.snake = initPoints;
-    const threshold = configValues.threshold || 50;
-    const imageBlur = Gauss(imageData,0.05);
-    const binaryImage = binSobel(imageBlur, width, height, threshold);
+    const threshold = configValues.threshold||50;
+    const binaryImage = binSobel(imageData, width, height, threshold);
 
     const result = ChamferDistance.compute(ChamferDistance.chamfer13, binaryImage, threshold, width, height);
     this.flowX = result[0];
@@ -29,8 +28,8 @@ export default class ACM {
         if (p[0] <= 0 || p[0] >= scope.w - 1 || p[1] <= 0 || p[1] >= scope.h - 1) return;
         const vx = (.5 - scope.flowX[~~(p[0])][~~(p[1])]) * 2;
         const vy = (.5 - scope.flowY[~~(p[0])][~~(p[1])]) * 2;
-        const x = p[0] + vx * 100;//100; //parameter
-        const y = p[1] + vy * 100;//100;
+        const x = p[0] + vx * 100;//parameter - скорорость силы
+        const y = p[1] + vy * 100;
         newsnake.push([x, y]);
       });
 
