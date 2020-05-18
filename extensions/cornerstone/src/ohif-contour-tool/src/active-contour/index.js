@@ -234,6 +234,55 @@ export default class ACTool extends BaseBrushTool {
     }
   }
 
+  /*
+    _animate(evt) {
+
+      let stopped = false;
+      document.addEventListener('keypress', (event) => {
+        if (event.code === 'KeyQ') stopped = true;
+      });
+
+      let it = 0;
+      const scope = this;
+      const canvas = document.getElementsByClassName(
+        'canvas-animate',
+      )[0];
+      const ctx = canvas.getContext('2d');
+      ctx.strokeStyle = 'rgba(255, 0, 0,1)';
+      ctx.fillStyle = 'rgba(255, 0, 0,0.4)';
+      ctx.lineWidth = 0.5;
+      const transform = calculateTransform(evt.detail, canvas);
+      ctx.setTransform(transform.m[0], transform.m[1], transform.m[2], transform.m[3], transform.m[4], transform.m[5]);
+
+      scope.animateLock = true;
+      let timerId = setInterval(function() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.beginPath();
+        let x = scope.result[it][0][0];
+        let y = scope.result[it][0][1];
+        ctx.moveTo(x, y);
+        for (let i = 1; i < scope.result[it].length; i++) {
+          x = scope.result[it][i][0];
+          y = scope.result[it][i][1];
+          ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.stroke();
+        ctx.fill();
+
+        if (it === scope.result.length - 1 || stopped) {
+          clearInterval(timerId);
+          canvas.remove();
+          scope.lastState = scope.result[it];
+          scope._paint(evt);
+          scope.animateLock = false;
+        }
+        it++;
+      }, 500);
+    }
+
+
+   */
   _animate(evt) {
 
     let stopped = false;
@@ -252,9 +301,11 @@ export default class ACTool extends BaseBrushTool {
     ctx.lineWidth = 0.5;
     const transform = calculateTransform(evt.detail, canvas);
     ctx.setTransform(transform.m[0], transform.m[1], transform.m[2], transform.m[3], transform.m[4], transform.m[5]);
-
     scope.animateLock = true;
-    let timerId = setInterval(function() {
+
+    let requestId;
+
+    function render(timestamp) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.beginPath();
       let x = scope.result[it][0][0];
@@ -268,18 +319,28 @@ export default class ACTool extends BaseBrushTool {
       ctx.closePath();
       ctx.stroke();
       ctx.fill();
-
-      if (it === scope.result.length - 1 || stopped) {
-        clearInterval(timerId);
-        canvas.remove();
-        scope.lastState = scope.result[it];
-        scope._paint(evt);
-        scope.animateLock = false;
-      }
       it++;
-    }, 500);
-  }
+      if (it === scope.result.length - 1 || stopped) {
+        stop();
+      } else {
+        start();
+      }
+    }
 
+    function stop() {
+      cancelAnimationFrame(requestId);
+      canvas.remove();
+      scope.lastState = scope.result[it];
+      scope._paint(evt);
+      scope.animateLock = false;
+    }
+
+    function start() {
+      requestId = requestAnimationFrame(render);
+    }
+
+    start();
+  }
 
   _paint(evt) {
 
