@@ -1,87 +1,3 @@
-import { thresholding,Gauss,countGradient,Sobel} from './preprocessing';
-import { init2DArray } from './utils';
-
-export default class ACM {
-  constructor(configValues = {}, width, height, imageData, initPoints) {
-    this.maxIterations = configValues.it || 100;
-    this.minlen = 0.5;//Math.pow(.1, 2);
-    this.maxlen = 6;//Math.pow(5, 1);
-    this.w = width;
-    this.h = height;
-    this.snake = initPoints;
-    const threshold = configValues.threshold||50;
-    const binaryImage = binSobel(imageData, width, height, threshold);
-
-    const result = ChamferDistance.compute(ChamferDistance.chamfer13, binaryImage, threshold, width, height);
-    this.flowX = result[0];
-    this.flowY = result[1];
-
-    this.contours = [];
-  }
-
-  loop() {
-    let scope = this;
-
-    for (let j = 0; j < this.maxIterations; j++) {
-      let newsnake = [];
-      this.snake.forEach(function(p) {
-        if (p[0] <= 0 || p[0] >= scope.w - 1 || p[1] <= 0 || p[1] >= scope.h - 1) return;
-        const vx = (.5 - scope.flowX[~~(p[0])][~~(p[1])]) * 2;
-        const vy = (.5 - scope.flowY[~~(p[0])][~~(p[1])]) * 2;
-        const x = p[0] + vx * 100;//parameter - скорорость силы
-        const y = p[1] + vy * 100;
-        newsnake.push([x, y]);
-      });
-
-      let tmp = [];
-      for (let i = 0; i < newsnake.length; i++) {
-
-        const prev = newsnake[(i - 1 < 0 ? newsnake.length - 1 : (i - 1))];
-        const cur = newsnake[i];
-        const next = newsnake[(i + 1) % newsnake.length];
-
-        const dist = this.distance(prev, cur) + this.distance(cur, next);
-
-        //if the length is too short, don't use this point anymore
-        if (dist > this.minlen) {
-
-          //if it is below the max length
-          if (dist < this.maxlen) {
-            //store the point
-            tmp.push(cur);
-
-          } else {
-            //otherwise split the previous and the next edges
-            const pp = [this.lerp(.5, prev[0], cur[0]), this.lerp(.5, prev[1], cur[1])];
-            const np = [this.lerp(.5, cur[0], next[0]), this.lerp(.5, cur[1], next[1])];
-
-            // and add the midpoints to the snake
-            tmp.push(pp, np);
-          }
-        }
-      }
-      this.contours.push(tmp);
-      this.snake = tmp;
-    }
-    return this.contours;
-  }
-
-  distance(a, b) {
-    const dx = a[0] - b[0];
-    const dy = a[1] - b[1];
-    return dx * dx + dy * dy;
-  }
-
-  lerp(t, a, b) {
-    return a + t * (b - a);
-  }
-}
-
-/**
- * Chamfer distance
- * @author Code by Xavier Philippeau
- * Kernels by Verwer, Borgefors and Thiel
- */
 export const ChamferDistance = function(chamfer) {
 
   chamfer.cheessboard = [[1, 0, 1], [1, 1, 1]];
@@ -117,7 +33,6 @@ export const ChamferDistance = function(chamfer) {
     // initialize distance
     for (let y = 0; y < h; y++) {
       for (let x = 0; x < w; x++) {
-        //if (data[y][x] / 255 <= threshold) {
         if (data[y][x] !== 1) {
           gradient[x][y] = -1;
         }
@@ -199,29 +114,3 @@ export const ChamferDistance = function(chamfer) {
 
   return chamfer;
 }({});
-
-function binSobel(data, w, h, threshold) {
-  let channelGradient = init2DArray(h, w);
-  for (let y = 0; y < h - 2; y++) {
-    for (let x = 0; x < w - 2; x++) {
-      let p00 = data[y][x];
-      let p10 = data[y][x + 1];
-      let p20 = data[y][x + 2];
-      let p01 = data[y + 1][x];
-      let p21 = data[y + 1][x + 2];
-      let p02 = data[y + 2][x];
-      let p12 = data[y + 2][x + 1];
-      let p22 = data[y + 2][x + 2];
-      let sx = (p20 + 2 * p21 + p22) - (p00 + 2 * p01 + p02);
-      let sy = (p02 + 2 * p12 + p22) - (p00 + 2 * p10 + p10);
-      let snorm = Math.floor(Math.sqrt(sx * sx + sy * sy));
-      if (snorm > threshold) {
-        channelGradient[y + 1][x + 1] = 1;
-      } else {
-        channelGradient[y + 1][x + 1] = 0;
-      }
-    }
-  }
-
-  return channelGradient;
-}

@@ -20,13 +20,15 @@ class ACDialog extends Component {
   };
 
   static InputDialog = ({ onSubmit, title, onClose }) => {
-    const [threshold, setThreshold] = useState(0.1);
+    const [threshold, setThreshold] = useState(50);
+    const [gamma, setGamma] = useState(100);
     const [it, setIt] = useState(100);
 
     const onSubmitHandler = () => {
       onSubmit({
         threshold,
-        it
+        gamma,
+        it,
       });
     };
 
@@ -40,19 +42,20 @@ class ACDialog extends Component {
             label="Threshold"
             id="Threshold"
           />
-          <label>
-            Iterations:
-          <Range
-            type="range"
-            name="Iterations"
-            min={10}
-            max={200}
-            step={5}
+          <TextInput
+            type="text"
+            value={gamma}
+            onChange={event => setGamma(event.target.value)}
+            label="Gamma"
+            id="Gamma"
+          />
+          <TextInput
+            type="text"
             value={it}
-            onChange={event => setIt(parseInt(event.target.value))}
+            onChange={event => setIt(event.target.value)}
+            label="Iterations"
             id="Iterations"
           />
-          </label>
 
         </ACDialog>
       </div>

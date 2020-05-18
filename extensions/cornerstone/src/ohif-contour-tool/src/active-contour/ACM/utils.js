@@ -16,5 +16,4 @@ function dist(a, b) {
 }
 
 
-
 export { init2DArray, dist };

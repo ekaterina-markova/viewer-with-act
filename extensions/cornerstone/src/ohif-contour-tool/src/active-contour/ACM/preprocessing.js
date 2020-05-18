@@ -125,4 +125,30 @@ function countGradient(data, w, h) {
 
 }
 
-export { thresholding, countGradient, Sobel, Gauss };
+function binSobel(data, w, h, threshold) {
+  let channelGradient = init2DArray(h, w);
+  for (let y = 0; y < h - 2; y++) {
+    for (let x = 0; x < w - 2; x++) {
+      let p00 = data[y][x];
+      let p10 = data[y][x + 1];
+      let p20 = data[y][x + 2];
+      let p01 = data[y + 1][x];
+      let p21 = data[y + 1][x + 2];
+      let p02 = data[y + 2][x];
+      let p12 = data[y + 2][x + 1];
+      let p22 = data[y + 2][x + 2];
+      let sx = (p20 + 2 * p21 + p22) - (p00 + 2 * p01 + p02);
+      let sy = (p02 + 2 * p12 + p22) - (p00 + 2 * p10 + p10);
+      let snorm = Math.floor(Math.sqrt(sx * sx + sy * sy));
+      if (snorm > threshold) {
+        channelGradient[y + 1][x + 1] = 1;
+      } else {
+        channelGradient[y + 1][x + 1] = 0;
+      }
+    }
+  }
+
+  return channelGradient;
+}
+
+export { thresholding, countGradient, Sobel, Gauss, binSobel };
