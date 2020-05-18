@@ -48,9 +48,7 @@ export default class ACTool extends BaseBrushTool {
       UINotificationService,
     };
     this.dialogId = null;
-
-    //document.addEventListener('keypress',this.callSettings);
-    //this.callSettings = this.callSettings.bind(this);
+    document.addEventListener('keypress',(event)=>{this.callSettings(event)});
   }
 
   passiveCallback() {
@@ -61,14 +59,13 @@ export default class ACTool extends BaseBrushTool {
     this.setSettings();
   }
 
-  /*
-    callSettings(evt){
-      const scope = this;
-      if(evt.key==='s' && !scope.formLock && !scope.animateLock){
-        scope.setSettings();
-      }
+  callSettings(evt) {
+    const scope = this;
+    if (evt.code === 'KeyS' && !scope.formLock && !scope.animateLock) {
+      scope.setSettings();
     }
-   */
+  }
+
   setSettings() {
     this.formLock = true;
     this.dialogId = this.services.UIDialogService.create({
@@ -234,51 +231,82 @@ export default class ACTool extends BaseBrushTool {
       'canvas-animate',
     )[0];
     const ctx = canvas.getContext('2d');
-    ctx.strokeStyle = 'rgba(255, 0, 0,1)';
-    ctx.fillStyle = 'rgba(255, 0, 0,0.4)';
+    ctx.strokeStyle = 'rgba(0, 255, 0,1)';
+    //ctx.fillStyle = 'rgba(255, 0, 0,0.4)';
     ctx.lineWidth = 0.5;
     const transform = calculateTransform(evt.detail, canvas);
     ctx.setTransform(transform.m[0], transform.m[1], transform.m[2], transform.m[3], transform.m[4], transform.m[5]);
     scope.animateLock = true;
 
-    let requestId;
 
-    function render(timestamp) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.beginPath();
-        let x = scope.result[it][0][0];
-        let y = scope.result[it][0][1];
-        ctx.moveTo(x, y);
-        for (let i = 1; i < scope.result[it].length; i++) {
-          x = scope.result[it][i][0];
-          y = scope.result[it][i][1];
-          ctx.lineTo(x, y);
-        }
-        ctx.closePath();
-        ctx.stroke();
-        ctx.fill();
-        it++;
-      if (it === scope.result.length - 1 || stopped) {
-        stop();
-      } else {
-       start();
+    let timerId = setInterval(function() {
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.beginPath();
+      let x = scope.result[it][0][0];
+      let y = scope.result[it][0][1];
+      ctx.moveTo(x, y);
+      for (let i = 1; i < scope.result[it].length; i++) {
+        x = scope.result[it][i][0];
+        y = scope.result[it][i][1];
+        ctx.lineTo(x, y);
       }
-    }
+      ctx.closePath();
+      ctx.stroke();
 
-    function stop() {
-      cancelAnimationFrame(requestId);
-      canvas.remove();
-      scope.lastState = scope.result[it];
-      scope._paint(evt);
-      scope.animateLock = false;
-    }
+      if (it === scope.result.length - 1 || stopped) {
+        clearInterval(timerId);
+        canvas.remove();
+        scope.lastState = scope.result[it];
+        scope._paint(evt);
+        scope.animateLock = false;
+      }
+      it++;
+    }, 1000 / 10);
+    /*
+        let requestId;
+        let fps = 20;
 
-    function start() {
-      requestId = requestAnimationFrame(render);
-    }
+        function render() {
 
-    start();
-    //setTimeout(start,1000);
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.beginPath();
+          let x = scope.result[it][0][0];
+          let y = scope.result[it][0][1];
+          ctx.moveTo(x, y);
+          for (let i = 1; i < scope.result[it].length; i++) {
+            x = scope.result[it][i][0];
+            y = scope.result[it][i][1];
+            ctx.lineTo(x, y);
+          }
+          ctx.closePath();
+          ctx.stroke();
+          //ctx.fill();
+          it++;
+          start();
+
+          if (it === scope.result.length - 1 || stopped) {
+            stop();
+          } else {
+            start();
+          }
+        }
+
+        function stop() {
+          cancelAnimationFrame(requestId);
+          canvas.remove();
+          scope.lastState = scope.result[it];
+          scope._paint(evt);
+          scope.animateLock = false;
+        }
+
+        function start() {
+            requestId = requestAnimationFrame(render);
+        }
+
+        start();
+
+     */
   }
 
   _paint(evt) {

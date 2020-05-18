@@ -1,19 +1,17 @@
-import { thresholding, Gauss, countGradient, Sobel, binSobel } from './preprocessing';
-import { init2DArray } from './utils';
+import { thresholding, Gauss, Sobel } from './preprocessing';
 import { ChamferDistance } from './ChamferDistance';
+import { dist } from './utils';
 
 export default class ACM {
   constructor(configValues = {}, width, height, imageData, initPoints) {
     this.maxIterations = configValues.it || 100;
-    this.minlen = 0.5;
-    this.maxlen = 6;
+    this.minlen = 0.9;
     this.w = width;
     this.h = height;
     this.snake = initPoints;
     const threshold = configValues.threshold || 50;
-    this.gamma = configValues.gamma||100;
-    const blurImage = Gauss(imageData,1.0);
-    const binaryImage = binSobel(blurImage, width, height, threshold);
+    this.gamma = 100;//configValues.gamma || 100;//clean?
+    const binaryImage = Sobel(imageData, width, height, threshold, true);
 
     const result = ChamferDistance.compute(ChamferDistance.chamfer13, binaryImage, threshold, width, height);
     this.flowX = result[0];
@@ -24,7 +22,6 @@ export default class ACM {
 
   loop() {
     let scope = this;
-
     for (let j = 0; j < this.maxIterations; j++) {
       let newsnake = [];
       this.snake.forEach(function(p) {
@@ -36,46 +33,64 @@ export default class ACM {
         newsnake.push([x, y]);
       });
 
-      let tmp = [];
-      for (let i = 0; i < newsnake.length; i++) {
-
-        const prev = newsnake[(i - 1 < 0 ? newsnake.length - 1 : (i - 1))];
-        const cur = newsnake[i];
-        const next = newsnake[(i + 1) % newsnake.length];
-
-        const dist = this.distance(prev, cur) + this.distance(cur, next);
-
-        //if the length is too short, don't use this point anymore
-        if (dist > this.minlen) {
-
-          //if it is below the max length
-          if (dist < this.maxlen) {
-            //store the point
-            tmp.push(cur);
-
-          } else {
-            //otherwise split the previous and the next edges
-            const pp = [this.lerp(.5, prev[0], cur[0]), this.lerp(.5, prev[1], cur[1])];
-            const np = [this.lerp(.5, cur[0], next[0]), this.lerp(.5, cur[1], next[1])];
-
-            // and add the midpoints to the snake
-            tmp.push(pp, np);
-          }
-        }
+      let tmp = this.rebuild(newsnake, this.minlen);
+      if (this.getSnakelength(tmp) !== 0) {
+        this.contours.push(tmp);
+        this.snake = tmp;
+      } else {
+        return;
       }
-      this.contours.push(tmp);
-      this.snake = tmp;
+
     }
     return this.contours;
   }
 
-  distance(a, b) {
-    const dx = a[0] - b[0];
-    const dy = a[1] - b[1];
-    return dx * dx + dy * dy;
+  rebuild(snake, maxlen) {
+    let tmp = [];
+    let clength = new Array(snake.length + 1);
+    clength[0] = 0;
+    for (let i = 0; i < snake.length; i++) {
+      let cur = snake[i];
+      let next = snake[(i + 1) % snake.length];
+      clength[i + 1] = clength[i] + dist(cur, next);
+    }
+
+    let total = clength[snake.length];
+    let nmb = Math.floor(0.5 + total / maxlen);
+
+    for (let i = 0, j = 0; j < nmb; j++) {
+      let d = (j * total) / nmb;
+      while (!(clength[i] <= d && d < clength[i + 1])) {
+        i++;
+      }
+      let prev = snake[(i + snake.length - 1) % snake.length];
+      let cur = snake[i];
+      let next = snake[(i + 1) % snake.length];
+      let next2 = snake[(i + 2) % snake.length];
+
+      let t = (d - clength[i]) / (clength[i + 1] - clength[i]);
+      let t2 = t * t;
+      let t3 = t2 * t;
+      let c0 = t3;
+      let c1 = -3 * t3 + 3 * t2 + 3 * t + 1;
+      let c2 = 3 * t3 - 6 * t2 + 4;
+      let c3 = -1 * t3 + 3 * t2 - 3 * t + 1;
+      let x = prev[0] * c3 + cur[0] * c2 + next[0] * c1 + next2[0] * c0;
+      let y = prev[1] * c3 + cur[1] * c2 + next[1] * c1 + next2[1] * c0;
+
+      tmp.push([Math.floor(0.5 + x / 6), Math.floor(0.5 + y / 6)]);
+    }
+    return tmp;
   }
 
-  lerp(t, a, b) {
-    return a + t * (b - a);
+  getSnakelength(snake) {
+    let length = 0;
+    for (let i = 0; i < snake.length; i++) {
+      let cur = snake[i];
+      let next = snake[(i + 1) % snake.length];
+      length += dist(cur, next);
+    }
+    return length;
   }
+
 }
