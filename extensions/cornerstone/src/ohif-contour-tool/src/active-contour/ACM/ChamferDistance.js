@@ -23,7 +23,7 @@ export const ChamferDistance = function(chamfer) {
     output[x][y] = newvalue;
   }
 
-  chamfer.compute = function(chamfermask, data, threshold, w, h) {
+  chamfer.compute = function(chamfermask, data, w, h) {
 
     chamfer.chamfer = chamfermask || chamfer.chamfer13;
 

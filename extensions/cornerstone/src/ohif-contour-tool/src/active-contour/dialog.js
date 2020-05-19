@@ -20,12 +20,16 @@ class ACDialog extends Component {
   };
 
   static InputDialog = ({ onSubmit, title, onClose }) => {
+    const [minLen, setMinLen] = useState(0.5);
+    const [maxLen, setMaxLen] = useState(2);
     const [threshold, setThreshold] = useState(50);
     const [gamma, setGamma] = useState(100);
     const [it, setIt] = useState(100);
 
     const onSubmitHandler = () => {
       onSubmit({
+        minLen,
+        maxLen,
         threshold,
         gamma,
         it,
@@ -35,6 +39,20 @@ class ACDialog extends Component {
     return (
       <div className="InputDialog">
         <ACDialog onClose={onClose} onConfirm={onSubmitHandler}>
+          <TextInput
+            type="text"
+            value={minLen}
+            onChange={event => setMinLen(event.target.value)}
+            label="MinLen"
+            id="MinLen"
+          />
+          <TextInput
+            type="text"
+            value={maxLen}
+            onChange={event => setMaxLen(event.target.value)}
+            label="MaxLen"
+            id="MaxLen"
+          />
           <TextInput
             type="text"
             value={threshold}

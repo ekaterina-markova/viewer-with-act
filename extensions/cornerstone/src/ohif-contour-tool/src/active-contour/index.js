@@ -60,9 +60,8 @@ export default class ACTool extends BaseBrushTool {
   }
 
   callSettings(evt) {
-    const scope = this;
     if (evt.code === 'KeyS' && !scope.formLock && !scope.animateLock) {
-      scope.setSettings();
+      this.setSettings();
     }
   }
 
@@ -212,6 +211,7 @@ export default class ACTool extends BaseBrushTool {
     if (this.result === undefined || this.result === []) {
       this.lastState = [...this.coord.map(it => [...it])];
       console.log('contours not found');
+      this.services.UINotificationService.show({ title: 'Info', message: 'Contours not found. Try other options.' });
       this._paint(evt);
     } else {
       this._animate(evt);
@@ -231,14 +231,13 @@ export default class ACTool extends BaseBrushTool {
       'canvas-animate',
     )[0];
     const ctx = canvas.getContext('2d');
-    ctx.strokeStyle = 'rgba(0, 255, 0,1)';
-    //ctx.fillStyle = 'rgba(255, 0, 0,0.4)';
+    ctx.strokeStyle = 'rgba(255, 0, 0,0.7)';
+    ctx.fillStyle = 'rgba(255, 0, 0,0.4)';
     ctx.lineWidth = 0.5;
     const transform = calculateTransform(evt.detail, canvas);
     ctx.setTransform(transform.m[0], transform.m[1], transform.m[2], transform.m[3], transform.m[4], transform.m[5]);
     scope.animateLock = true;
-
-
+   // /*
     let timerId = setInterval(function() {
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -253,6 +252,7 @@ export default class ACTool extends BaseBrushTool {
       }
       ctx.closePath();
       ctx.stroke();
+      ctx.fill();
 
       if (it === scope.result.length - 1 || stopped) {
         clearInterval(timerId);
@@ -263,9 +263,11 @@ export default class ACTool extends BaseBrushTool {
       }
       it++;
     }, 1000 / 10);
-    /*
+//*/
+
+/*
         let requestId;
-        let fps = 20;
+        let fps = 5;
 
         function render() {
 
@@ -281,7 +283,7 @@ export default class ACTool extends BaseBrushTool {
           }
           ctx.closePath();
           ctx.stroke();
-          //ctx.fill();
+          ctx.fill();
           it++;
           start();
 
@@ -301,12 +303,16 @@ export default class ACTool extends BaseBrushTool {
         }
 
         function start() {
+
             requestId = requestAnimationFrame(render);
+
+
         }
 
         start();
 
-     */
+ */
+
   }
 
   _paint(evt) {

@@ -5,15 +5,18 @@ import { dist } from './utils';
 export default class ACM {
   constructor(configValues = {}, width, height, imageData, initPoints) {
     this.maxIterations = configValues.it || 100;
-    this.minlen = 0.9;
+    this.minLen = configValues.minLen || 0.5;
+    this.maxLen = configValues.maxLen || 2;
     this.w = width;
     this.h = height;
     this.snake = initPoints;
     const threshold = configValues.threshold || 50;
-    this.gamma = 100;//configValues.gamma || 100;//clean?
-    const binaryImage = Sobel(imageData, width, height, threshold, true);
+    this.gamma = configValues.gamma || 100;
+    const edgeMap = Sobel(imageData, width, height);
+    const binaryImage = thresholding(threshold, width, height, edgeMap);
+    //const binaryImage = thresholding(threshold, width, height, imageData);
 
-    const result = ChamferDistance.compute(ChamferDistance.chamfer13, binaryImage, threshold, width, height);
+    const result = ChamferDistance.compute(ChamferDistance.chamfer13, binaryImage, width, height);
     this.flowX = result[0];
     this.flowY = result[1];
 
@@ -23,19 +26,20 @@ export default class ACM {
   loop() {
     let scope = this;
     for (let j = 0; j < this.maxIterations; j++) {
-      let newsnake = [];
+      let newSnake = [];
       this.snake.forEach(function(p) {
         if (p[0] <= 0 || p[0] >= scope.w - 1 || p[1] <= 0 || p[1] >= scope.h - 1) return;
         const vx = (.5 - scope.flowX[~~(p[0])][~~(p[1])]) * 2;
         const vy = (.5 - scope.flowY[~~(p[0])][~~(p[1])]) * 2;
         const x = p[0] + vx * scope.gamma;
         const y = p[1] + vy * scope.gamma;
-        newsnake.push([x, y]);
+        newSnake.push([x, y]);
       });
 
-      let tmp = this.rebuild(newsnake, this.minlen);
+      let tmp = this.rebuild(this.maxLen, this.minLen, newSnake);
+
       if (this.getSnakelength(tmp) !== 0) {
-        this.contours.push(tmp);
+        this.contours.push(this.cubicInterpolation(tmp, 1));
         this.snake = tmp;
       } else {
         return;
@@ -45,7 +49,7 @@ export default class ACM {
     return this.contours;
   }
 
-  rebuild(snake, maxlen) {
+  cubicInterpolation(snake, maxLen) {
     let tmp = [];
     let clength = new Array(snake.length + 1);
     clength[0] = 0;
@@ -56,7 +60,7 @@ export default class ACM {
     }
 
     let total = clength[snake.length];
-    let nmb = Math.floor(0.5 + total / maxlen);
+    let nmb = Math.floor(0.5 + total / maxLen);
 
     for (let i = 0, j = 0; j < nmb; j++) {
       let d = (j * total) / nmb;
@@ -83,6 +87,26 @@ export default class ACM {
     return tmp;
   }
 
+  rebuild(maxLen, minLen, snake) {
+    let tmp = [];
+    for (let i = 0; i < snake.length; i++) {
+      const prev = snake[(i - 1 < 0 ? snake.length - 1 : (i - 1))];
+      const cur = snake[i];
+      const next = snake[(i + 1) % snake.length];
+      const distance = dist(prev, cur) + dist(cur, next);
+      if (distance > minLen) {
+        if (distance < maxLen) {
+          tmp.push(cur);
+        } else {
+          const pp = [this.lerp(.5, prev[0], cur[0]), this.lerp(.5, prev[1], cur[1])];
+          const np = [this.lerp(.5, cur[0], next[0]), this.lerp(.5, cur[1], next[1])];
+          tmp.push(pp, np);
+        }
+      }
+    }
+    return tmp;
+  }
+
   getSnakelength(snake) {
     let length = 0;
     for (let i = 0; i < snake.length; i++) {
@@ -91,6 +115,10 @@ export default class ACM {
       length += dist(cur, next);
     }
     return length;
+  }
+
+  lerp(t, a, b) {
+    return a + t * (b - a);
   }
 
 }
