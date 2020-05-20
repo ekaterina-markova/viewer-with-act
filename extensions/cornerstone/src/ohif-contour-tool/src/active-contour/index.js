@@ -60,7 +60,7 @@ export default class ACTool extends BaseBrushTool {
   }
 
   callSettings(evt) {
-    if (evt.code === 'KeyS' && !scope.formLock && !scope.animateLock) {
+    if (evt.code === 'KeyS' && !this.formLock && !this.animateLock) {
       this.setSettings();
     }
   }
@@ -237,9 +237,8 @@ export default class ACTool extends BaseBrushTool {
     const transform = calculateTransform(evt.detail, canvas);
     ctx.setTransform(transform.m[0], transform.m[1], transform.m[2], transform.m[3], transform.m[4], transform.m[5]);
     scope.animateLock = true;
-   // /*
-    let timerId = setInterval(function() {
 
+    let timerId = setInterval(function() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.beginPath();
       let x = scope.result[it][0][0];
@@ -263,56 +262,6 @@ export default class ACTool extends BaseBrushTool {
       }
       it++;
     }, 1000 / 10);
-//*/
-
-/*
-        let requestId;
-        let fps = 5;
-
-        function render() {
-
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          ctx.beginPath();
-          let x = scope.result[it][0][0];
-          let y = scope.result[it][0][1];
-          ctx.moveTo(x, y);
-          for (let i = 1; i < scope.result[it].length; i++) {
-            x = scope.result[it][i][0];
-            y = scope.result[it][i][1];
-            ctx.lineTo(x, y);
-          }
-          ctx.closePath();
-          ctx.stroke();
-          ctx.fill();
-          it++;
-          start();
-
-          if (it === scope.result.length - 1 || stopped) {
-            stop();
-          } else {
-            start();
-          }
-        }
-
-        function stop() {
-          cancelAnimationFrame(requestId);
-          canvas.remove();
-          scope.lastState = scope.result[it];
-          scope._paint(evt);
-          scope.animateLock = false;
-        }
-
-        function start() {
-
-            requestId = requestAnimationFrame(render);
-
-
-        }
-
-        start();
-
- */
-
   }
 
   _paint(evt) {

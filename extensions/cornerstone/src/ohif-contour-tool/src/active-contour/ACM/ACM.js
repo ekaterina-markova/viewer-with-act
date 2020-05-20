@@ -4,17 +4,19 @@ import { dist } from './utils';
 
 export default class ACM {
   constructor(configValues = {}, width, height, imageData, initPoints) {
-    this.maxIterations = configValues.it || 100;
-    this.minLen = configValues.minLen || 0.5;
-    this.maxLen = configValues.maxLen || 2;
+
+    this.minLen = 0.1;
+    this.maxLen = 2;
     this.w = width;
     this.h = height;
     this.snake = initPoints;
+
+    this.maxIterations = configValues.it || 100;
     const threshold = configValues.threshold || 50;
     this.gamma = configValues.gamma || 100;
+
     const edgeMap = Sobel(imageData, width, height);
     const binaryImage = thresholding(threshold, width, height, edgeMap);
-    //const binaryImage = thresholding(threshold, width, height, imageData);
 
     const result = ChamferDistance.compute(ChamferDistance.chamfer13, binaryImage, width, height);
     this.flowX = result[0];

@@ -1,6 +1,6 @@
 import React, { Component, useState } from 'react';
 import PropTypes from 'prop-types';
-import { TextInput, Range, Tooltip } from '@ohif/ui';
+import { Range} from '@ohif/ui';
 
 class ACDialog extends Component {
   static propTypes = {
@@ -20,16 +20,12 @@ class ACDialog extends Component {
   };
 
   static InputDialog = ({ onSubmit, title, onClose }) => {
-    const [minLen, setMinLen] = useState(0.5);
-    const [maxLen, setMaxLen] = useState(2);
     const [threshold, setThreshold] = useState(50);
     const [gamma, setGamma] = useState(100);
     const [it, setIt] = useState(100);
 
     const onSubmitHandler = () => {
       onSubmit({
-        minLen,
-        maxLen,
         threshold,
         gamma,
         it,
@@ -39,41 +35,45 @@ class ACDialog extends Component {
     return (
       <div className="InputDialog">
         <ACDialog onClose={onClose} onConfirm={onSubmitHandler}>
-          <TextInput
-            type="text"
-            value={minLen}
-            onChange={event => setMinLen(event.target.value)}
-            label="MinLen"
-            id="MinLen"
-          />
-          <TextInput
-            type="text"
-            value={maxLen}
-            onChange={event => setMaxLen(event.target.value)}
-            label="MaxLen"
-            id="MaxLen"
-          />
-          <TextInput
-            type="text"
-            value={threshold}
-            onChange={event => setThreshold(event.target.value)}
-            label="Threshold"
-            id="Threshold"
-          />
-          <TextInput
-            type="text"
-            value={gamma}
-            onChange={event => setGamma(event.target.value)}
-            label="Gamma"
-            id="Gamma"
-          />
-          <TextInput
-            type="text"
-            value={it}
-            onChange={event => setIt(event.target.value)}
-            label="Iterations"
-            id="Iterations"
-          />
+          <label>
+            Threshold: {threshold}
+            <Range
+              type="range"
+              name="Threshold"
+              min={10}
+              max={255}
+              step={1}
+              value={threshold}
+              onChange={event => setThreshold(parseInt(event.target.value))}
+              id="Threshold"
+            />
+          </label>
+          <label>
+            External energy: {gamma}
+            <Range
+              type="range"
+              name="Gamma"
+              min={5}
+              max={200}
+              step={1}
+              value={gamma}
+              onChange={event => setGamma(parseInt(event.target.value))}
+              id="Gamma"
+            />
+          </label>
+          <label>
+            Iterations: {it}
+            <Range
+              type="range"
+              name="Iterations"
+              min={10}
+              max={500}
+              step={1}
+              value={it}
+              onChange={event => setIt(parseInt(event.target.value))}
+              id="Iterations"
+            />
+          </label>
 
         </ACDialog>
       </div>

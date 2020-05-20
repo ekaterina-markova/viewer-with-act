@@ -39,7 +39,6 @@ export const ChamferDistance = function(chamfer) {
 
       }
     }
-
     //normalization value
     let max = 0;
     let min = 1e10;
