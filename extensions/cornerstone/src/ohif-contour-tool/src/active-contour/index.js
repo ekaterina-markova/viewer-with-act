@@ -48,7 +48,9 @@ export default class ACTool extends BaseBrushTool {
       UINotificationService,
     };
     this.dialogId = null;
-    document.addEventListener('keypress',(event)=>{this.callSettings(event)});
+    document.addEventListener('keypress', (event) => {
+      this.callSettings(event);
+    });
   }
 
   passiveCallback() {
@@ -72,8 +74,10 @@ export default class ACTool extends BaseBrushTool {
       isDraggable: true,
       content: ACDialog.InputDialog,
       contentProps: {
-        onClose: () =>
-          this.services.UIDialogService.dismiss({ id: this.dialogId }),
+        onClose: () => {
+          this.services.UIDialogService.dismiss({ id: this.dialogId });
+          this.formLock = false;
+        },
         onSubmit: value => {
           this.onDialogValueChanged(value);
           this.services.UIDialogService.dismiss({ id: this.dialogId });
@@ -195,10 +199,6 @@ export default class ACTool extends BaseBrushTool {
     super._stopListeningForMouseUp(element);
 
     console.log('result');
-    const generalSeriesModuleMeta = cornerstone.metaData.get(
-      'generalSeriesModule',
-      eventData.image.imageId,
-    );
     const acm = new ACM(
       this.kassConfig,
       this.width,
