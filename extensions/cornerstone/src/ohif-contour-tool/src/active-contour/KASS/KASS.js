@@ -216,7 +216,6 @@ export default class KASS {
       let c3 = -1 * t3 + 3 * t2 - 3 * t + 1;
       let x = prev[0] * c3 + cur[0] * c2 + next[0] * c1 + next2[0] * c0;
       let y = prev[1] * c3 + cur[1] * c2 + next[1] * c1 + next2[1] * c0;
-
       // add computed point to the new snake
       tmp.push([Math.floor(0.5 + x / 6), Math.floor(0.5 + y / 6)]);
     }
