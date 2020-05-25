@@ -30,7 +30,6 @@ export const ChamferDistance = function(chamfer) {
     let gradient = chamfer.init2DArray(w, h);
     let flowX = chamfer.init2DArray(w, h);
     let flowY = chamfer.init2DArray(w, h);
-    // initialize distance
     for (let y = 0; y < h; y++) {
       for (let x = 0; x < w; x++) {
         if (data[y][x] !== 1) {
@@ -39,7 +38,6 @@ export const ChamferDistance = function(chamfer) {
 
       }
     }
-    //normalization value
     let max = 0;
     let min = 1e10;
     //forward pass
