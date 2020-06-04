@@ -4,6 +4,8 @@ import { ACDialog } from './dialog';
 import calculateTransform from './utils/calculateTransform';
 import ACM from './ACM/ACM';
 
+import { cubicInterpolation } from './ACM/utils';
+
 const { drawBrushPixels } = csTools.importInternal('util/segmentationUtils');
 const segmentationModule = csTools.getModule('segmentation');
 const BaseBrushTool = csTools.importInternal('base/BaseBrushTool');
@@ -251,7 +253,7 @@ export default class ACTool extends BaseBrushTool {
       }
       ctx.closePath();
       ctx.stroke();
-      ctx.fill();
+      //ctx.fill();
 
       if (it === scope.result.length - 1 || stopped) {
         clearInterval(timerId);
@@ -270,7 +272,7 @@ export default class ACTool extends BaseBrushTool {
     const { element } = evt.detail;
 
     //drawBrushPixel
-    const lastContours = this.lastState;
+    const lastContours = cubicInterpolation(this.lastState, 1);
     const { getters } = segmentationModule;
     const {
       labelmap2D,

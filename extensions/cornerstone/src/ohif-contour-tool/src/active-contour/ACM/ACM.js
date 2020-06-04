@@ -41,7 +41,8 @@ export default class ACM {
       let tmp = this.rebuild(this.maxLen, this.minLen, newSnake);
 
       if (this.getSnakelength(tmp) !== 0) {
-        this.contours.push(this.cubicInterpolation(tmp, 1));
+        this.contours.push(this.cubicInterpolation(tmp, 0.5));//
+        //this.contours.push(tmp);
         this.snake = tmp;
       } else {
         return;
@@ -84,7 +85,8 @@ export default class ACM {
       let x = prev[0] * c3 + cur[0] * c2 + next[0] * c1 + next2[0] * c0;
       let y = prev[1] * c3 + cur[1] * c2 + next[1] * c1 + next2[1] * c0;
 
-      tmp.push([Math.floor(0.5 + x / 6), Math.floor(0.5 + y / 6)]);
+      //tmp.push([Math.floor(0.5 + x / 6), Math.floor(0.5 + y / 6)]);
+      tmp.push([(0.5 + x / 6), (0.5 + y / 6)]);
     }
     return tmp;
   }
